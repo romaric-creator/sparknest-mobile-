@@ -107,7 +107,7 @@ const DashboardScreen = ({ navigation }) => {
     );
 };
 
-const StatCard = ({ title, value, icon, subtitle, onPress }) => (
+const StatCard = ({ title, value, icon, subtitle = null, onPress }) => (
     <TouchableOpacity style={styles.statCard} onPress={onPress}>
         <View style={styles.statHeader}>
             {icon}

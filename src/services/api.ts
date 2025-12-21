@@ -43,6 +43,9 @@ export const adminService = {
     createArticle: (data) => api.post('/admin/articles', data),
     updateArticle: (id, data) => api.put(`/admin/articles/${id}`, data),
     deleteArticle: (id) => api.delete(`/admin/articles/${id}`),
+    createProject: (data) => api.post('/admin/projects', data),
+    updateProject: (id, data) => api.put(`/admin/projects/${id}`, data),
+    deleteProject: (id) => api.delete(`/admin/projects/${id}`),
 };
 
 export default api;
