@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 // NOTE: Remplacez par l'URL de votre backend (ex: http://192.168.1.XX:3000/api)
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://backend-sparknest-site.vercel.app/api';
 
 const api = axios.create({
     baseURL: API_URL,
