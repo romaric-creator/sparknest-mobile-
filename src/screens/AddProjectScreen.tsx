@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { adminService } from '../services/api';
+import { useNavigation } from '@react-navigation/native';
 
-const AddProjectScreen = ({ navigation }) => {
+const AddProjectScreen = () => {
+    const navigation = useNavigation();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+    const [technologies, setTechnologies] = useState('');
+    const [demoUrl, setDemoUrl] = useState('');
+    const [githubUrl, setGithubUrl] = useState('');
     const [status, setStatus] = useState('En cours');
     const [loading, setLoading] = useState(false);
 
     const handleSave = async () => {
-        if (!title || !description) {
-            Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+        if (!title || !description || !technologies || !imageUrl) {
+            Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires (Titre, Description, Image URL, Technologies).');
             return;
         }
 
         setLoading(true);
         try {
-            await adminService.createProject({ title, description, status });
+            await adminService.createProject({ 
+                title, 
+                description, 
+                status,
+                image: imageUrl,
+                technologies,
+                demoUrl,
+                githubUrl,
+            });
             Alert.alert('Succès', 'Projet créé avec succès !');
             navigation.goBack();
         } catch (error) {
@@ -28,7 +42,7 @@ const AddProjectScreen = ({ navigation }) => {
     };
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
             <View style={styles.form}>
                 <Text style={styles.label}>Titre du projet</Text>
                 <TextInput
@@ -36,7 +50,7 @@ const AddProjectScreen = ({ navigation }) => {
                     value={title}
                     onChangeText={setTitle}
                     placeholder="Nom du projet"
-                    placeholderTextColor="#64748b"
+                    placeholderTextColor="#94a3b8"
                 />
 
                 <Text style={styles.label}>Description</Text>
@@ -45,10 +59,47 @@ const AddProjectScreen = ({ navigation }) => {
                     value={description}
                     onChangeText={setDescription}
                     placeholder="Description détaillée..."
-                    placeholderTextColor="#64748b"
+                    placeholderTextColor="#94a3b8"
                     multiline
-                    numberOfLines={6}
-                    textAlignVertical="top"
+                />
+
+                <Text style={styles.label}>URL de l'image</Text>
+                <TextInput
+                    style={styles.input}
+                    value={imageUrl}
+                    onChangeText={setImageUrl}
+                    placeholder="https://example.com/image.png"
+                    placeholderTextColor="#94a3b8"
+                    keyboardType="url"
+                />
+
+                <Text style={styles.label}>Technologies (séparées par des virgules)</Text>
+                <TextInput
+                    style={styles.input}
+                    value={technologies}
+                    onChangeText={setTechnologies}
+                    placeholder="React, Node.js, TypeScript"
+                    placeholderTextColor="#94a3b8"
+                />
+
+                <Text style={styles.label}>URL de la Démo (optionnel)</Text>
+                <TextInput
+                    style={styles.input}
+                    value={demoUrl}
+                    onChangeText={setDemoUrl}
+                    placeholder="https://project-demo.com"
+                    placeholderTextColor="#94a3b8"
+                    keyboardType="url"
+                />
+
+                <Text style={styles.label}>URL GitHub (optionnel)</Text>
+                <TextInput
+                    style={styles.input}
+                    value={githubUrl}
+                    onChangeText={setGithubUrl}
+                    placeholder="https://github.com/user/repo"
+                    placeholderTextColor="#94a3b8"
+                    keyboardType="url"
                 />
 
                 <Text style={styles.label}>Statut</Text>
@@ -70,7 +121,7 @@ const AddProjectScreen = ({ navigation }) => {
                     disabled={loading}
                 >
                     {loading ? (
-                        <ActivityIndicator color="#020617" />
+                        <ActivityIndicator color="#ffffff" />
                     ) : (
                         <Text style={styles.saveButtonText}>Créer le projet</Text>
                     )}
@@ -83,65 +134,67 @@ const AddProjectScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#020617',
+        backgroundColor: '#ffffff',
     },
     form: {
-        padding: 20,
+        padding: 24,
     },
     label: {
-        color: '#94a3b8',
+        color: '#334155',
         fontSize: 14,
         marginBottom: 8,
         fontWeight: '600',
     },
     input: {
-        backgroundColor: '#0f172a',
-        borderRadius: 10,
-        padding: 15,
-        color: '#fff',
+        backgroundColor: '#f8fafc',
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: '#0f172a',
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#1e293b',
+        borderColor: '#e2e8f0',
+        fontSize: 16,
     },
     textArea: {
-        height: 120,
+        minHeight: 100,
+        textAlignVertical: 'top',
     },
     statusContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         marginBottom: 30,
+        gap: 8,
     },
     statusOption: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: '#f1f5f9',
         padding: 12,
         borderRadius: 8,
-        marginHorizontal: 4,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#1e293b',
+        borderColor: 'transparent',
     },
     statusActive: {
-        backgroundColor: 'rgba(34, 211, 238, 0.1)',
-        borderColor: '#22d3ee',
+        backgroundColor: '#0f172a',
+        borderColor: '#0f172a',
     },
     statusText: {
-        color: '#94a3b8',
-        fontSize: 12,
+        color: '#475569',
+        fontSize: 14,
         fontWeight: '600',
     },
     statusTextActive: {
-        color: '#22d3ee',
+        color: '#ffffff',
     },
     saveButton: {
-        backgroundColor: '#22d3ee',
-        padding: 18,
-        borderRadius: 12,
+        backgroundColor: '#0f172a',
+        padding: 16,
+        borderRadius: 8,
         alignItems: 'center',
         marginTop: 10,
     },
     saveButtonText: {
-        color: '#020617',
+        color: '#ffffff',
         fontSize: 16,
         fontWeight: 'bold',
     },

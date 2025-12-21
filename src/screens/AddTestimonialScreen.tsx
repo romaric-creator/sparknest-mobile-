@@ -1,30 +1,31 @@
+// mobile/src/screens/AddTestimonialScreen.tsx
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { adminService } from '../services/api';
 import { useNavigation } from '@react-navigation/native';
 
-const AddArticleScreen = () => {
+const AddTestimonialScreen = () => {
     const navigation = useNavigation();
-    const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
+    const [name, setName] = useState('');
+    const [role, setRole] = useState('');
     const [content, setContent] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [image, setImage] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSave = async () => {
-        if (!title || !category || !content || !imageUrl) {
-            Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+        if (!name || !role || !content) {
+            Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires (Nom, Rôle, Contenu).');
             return;
         }
 
         setLoading(true);
         try {
-            await adminService.createArticle({ title, category, content, image: imageUrl });
-            Alert.alert('Succès', 'Article ajouté avec succès !');
+            await adminService.createTestimonial({ name, role, content, image });
+            Alert.alert('Succès', 'Témoignage ajouté avec succès !');
             navigation.goBack();
         } catch (error) {
-            console.error('Erreur lors de la création de l\'article:', error);
-            Alert.alert('Erreur', 'Impossible de créer l\'article.');
+            console.error('Erreur lors de la création du témoignage:', error);
+            Alert.alert('Erreur', 'Impossible de créer le témoignage.');
         } finally {
             setLoading(false);
         }
@@ -33,40 +34,40 @@ const AddArticleScreen = () => {
     return (
         <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
             <View style={styles.form}>
-                <Text style={styles.label}>Titre</Text>
+                <Text style={styles.label}>Nom de la personne</Text>
                 <TextInput
                     style={styles.input}
-                    value={title}
-                    onChangeText={setTitle}
-                    placeholder="Titre de l'article"
+                    value={name}
+                    onChangeText={setName}
+                    placeholder="Ex: Jean Dupont"
                     placeholderTextColor="#94a3b8"
                 />
 
-                <Text style={styles.label}>Catégorie</Text>
+                <Text style={styles.label}>Rôle / Entreprise</Text>
                 <TextInput
                     style={styles.input}
-                    value={category}
-                    onChangeText={setCategory}
-                    placeholder="Ex: Technologie, Design..."
+                    value={role}
+                    onChangeText={setRole}
+                    placeholder="Ex: CEO, Tech Corp"
                     placeholderTextColor="#94a3b8"
                 />
 
-                <Text style={styles.label}>URL de l'image</Text>
+                <Text style={styles.label}>URL de l'image (optionnel)</Text>
                 <TextInput
                     style={styles.input}
-                    value={imageUrl}
-                    onChangeText={setImageUrl}
-                    placeholder="https://example.com/image.png"
+                    value={image}
+                    onChangeText={setImage}
+                    placeholder="https://example.com/photo.png"
                     placeholderTextColor="#94a3b8"
                     keyboardType="url"
                 />
 
-                <Text style={styles.label}>Contenu</Text>
+                <Text style={styles.label}>Contenu du témoignage</Text>
                 <TextInput
                     style={[styles.input, styles.textArea]}
                     value={content}
                     onChangeText={setContent}
-                    placeholder="Contenu de l'article..."
+                    placeholder="Leur service était exceptionnel..."
                     placeholderTextColor="#94a3b8"
                     multiline
                 />
@@ -79,7 +80,7 @@ const AddArticleScreen = () => {
                     {loading ? (
                         <ActivityIndicator color="#ffffff" />
                     ) : (
-                        <Text style={styles.saveButtonText}>Enregistrer</Text>
+                        <Text style={styles.saveButtonText}>Enregistrer le témoignage</Text>
                     )}
                 </TouchableOpacity>
             </View>
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     textArea: {
-        minHeight: 200,
+        minHeight: 120,
         textAlignVertical: 'top',
     },
     saveButton: {
@@ -130,4 +131,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AddArticleScreen;
+export default AddTestimonialScreen;

@@ -1,30 +1,30 @@
+// mobile/src/screens/AddServiceScreen.tsx
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { adminService } from '../services/api';
 import { useNavigation } from '@react-navigation/native';
 
-const AddArticleScreen = () => {
+const AddServiceScreen = () => {
     const navigation = useNavigation();
+    const [icon, setIcon] = useState('');
     const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
-    const [content, setContent] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSave = async () => {
-        if (!title || !category || !content || !imageUrl) {
+        if (!icon || !title || !description) {
             Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
             return;
         }
 
         setLoading(true);
         try {
-            await adminService.createArticle({ title, category, content, image: imageUrl });
-            Alert.alert('Succès', 'Article ajouté avec succès !');
+            await adminService.createService({ icon, title, description });
+            Alert.alert('Succès', 'Service ajouté avec succès !');
             navigation.goBack();
         } catch (error) {
-            console.error('Erreur lors de la création de l\'article:', error);
-            Alert.alert('Erreur', 'Impossible de créer l\'article.');
+            console.error('Erreur lors de la création du service:', error);
+            Alert.alert('Erreur', 'Impossible de créer le service.');
         } finally {
             setLoading(false);
         }
@@ -33,40 +33,30 @@ const AddArticleScreen = () => {
     return (
         <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
             <View style={styles.form}>
-                <Text style={styles.label}>Titre</Text>
+                <Text style={styles.label}>Nom de l'icône (Lucide React Native)</Text>
+                <TextInput
+                    style={styles.input}
+                    value={icon}
+                    onChangeText={setIcon}
+                    placeholder="Ex: Code, Smartphone, Cloud"
+                    placeholderTextColor="#94a3b8"
+                />
+
+                <Text style={styles.label}>Titre du service</Text>
                 <TextInput
                     style={styles.input}
                     value={title}
                     onChangeText={setTitle}
-                    placeholder="Titre de l'article"
+                    placeholder="Ex: Développement Web"
                     placeholderTextColor="#94a3b8"
                 />
 
-                <Text style={styles.label}>Catégorie</Text>
-                <TextInput
-                    style={styles.input}
-                    value={category}
-                    onChangeText={setCategory}
-                    placeholder="Ex: Technologie, Design..."
-                    placeholderTextColor="#94a3b8"
-                />
-
-                <Text style={styles.label}>URL de l'image</Text>
-                <TextInput
-                    style={styles.input}
-                    value={imageUrl}
-                    onChangeText={setImageUrl}
-                    placeholder="https://example.com/image.png"
-                    placeholderTextColor="#94a3b8"
-                    keyboardType="url"
-                />
-
-                <Text style={styles.label}>Contenu</Text>
+                <Text style={styles.label}>Description</Text>
                 <TextInput
                     style={[styles.input, styles.textArea]}
-                    value={content}
-                    onChangeText={setContent}
-                    placeholder="Contenu de l'article..."
+                    value={description}
+                    onChangeText={setDescription}
+                    placeholder="Courte description du service..."
                     placeholderTextColor="#94a3b8"
                     multiline
                 />
@@ -79,7 +69,7 @@ const AddArticleScreen = () => {
                     {loading ? (
                         <ActivityIndicator color="#ffffff" />
                     ) : (
-                        <Text style={styles.saveButtonText}>Enregistrer</Text>
+                        <Text style={styles.saveButtonText}>Enregistrer le service</Text>
                     )}
                 </TouchableOpacity>
             </View>
@@ -113,7 +103,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     textArea: {
-        minHeight: 200,
+        minHeight: 100,
         textAlignVertical: 'top',
     },
     saveButton: {
@@ -130,4 +120,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AddArticleScreen;
+export default AddServiceScreen;

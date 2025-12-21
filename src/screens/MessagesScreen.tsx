@@ -41,9 +41,9 @@ const MessagesScreen = () => {
                     <Text style={styles.senderEmail}>{item.email}</Text>
                 </View>
                 {!item.read ? (
-                    <Mail color="#22d3ee" size={20} />
+                    <Mail color="#0D172B" size={20} />
                 ) : (
-                    <MailOpen color="#94a3b8" size={20} />
+                    <MailOpen color="#475569" size={20} />
                 )}
             </View>
             <Text style={styles.subject}>{item.subject}</Text>
@@ -54,7 +54,7 @@ const MessagesScreen = () => {
                     style={styles.readButton}
                     onPress={() => handleMarkRead(item.id)}
                 >
-                    <CheckCircle color="#22d3ee" size={16} />
+                    <CheckCircle color="#0D172B" size={16} />
                     <Text style={styles.readButtonText}>Marquer comme lu</Text>
                 </TouchableOpacity>
             )}
@@ -64,7 +64,7 @@ const MessagesScreen = () => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#22d3ee" />
+                <ActivityIndicator size="large" color="#0D172B" />
             </View>
         );
     }
@@ -77,7 +77,7 @@ const MessagesScreen = () => {
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.listContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadMessages(); }} tintColor="#22d3ee" />
+                    <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadMessages(); }} tintColor="#0D172B" />
                 }
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
@@ -92,11 +92,11 @@ const MessagesScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#020617',
+        backgroundColor: '#F1F5F9',
     },
     loadingContainer: {
         flex: 1,
-        backgroundColor: '#020617',
+        backgroundColor: '#F1F5F9',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -104,18 +104,18 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
     },
     messageCard: {
-        backgroundColor: '#0f172a',
+        backgroundColor: '#0D172Bfff',
         padding: 20,
         marginHorizontal: 20,
         marginTop: 15,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: '#1e293b',
+        borderColor: '#e2e8f0',
     },
     unreadCard: {
-        borderColor: '#22d3ee',
+        borderColor: '#0D172B',
         borderWidth: 1,
-        shadowColor: '#22d3ee',
+        shadowColor: '#0D172B',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
@@ -131,16 +131,16 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     senderName: {
-        color: '#fff',
+        color: '#0D172B',
         fontSize: 16,
         fontWeight: 'bold',
     },
     senderEmail: {
-        color: '#94a3b8',
+        color: '#475569',
         fontSize: 12,
     },
     subject: {
-        color: '#22d3ee',
+        color: '#0D172B',
         fontSize: 14,
         fontWeight: '600',
         marginBottom: 5,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     readButtonText: {
-        color: '#22d3ee',
+        color: '#0D172B',
         fontSize: 12,
         marginLeft: 5,
         fontWeight: '600',
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     emptyText: {
-        color: '#94a3b8',
+        color: '#475569',
         fontSize: 16,
     },
 });

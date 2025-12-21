@@ -1,30 +1,29 @@
+// mobile/src/screens/AddTechnologyScreen.tsx
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { adminService } from '../services/api';
 import { useNavigation } from '@react-navigation/native';
 
-const AddArticleScreen = () => {
+const AddTechnologyScreen = () => {
     const navigation = useNavigation();
-    const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
-    const [content, setContent] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [name, setName] = useState('');
+    const [icon, setIcon] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSave = async () => {
-        if (!title || !category || !content || !imageUrl) {
+        if (!name || !icon) {
             Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
             return;
         }
 
         setLoading(true);
         try {
-            await adminService.createArticle({ title, category, content, image: imageUrl });
-            Alert.alert('Succès', 'Article ajouté avec succès !');
+            await adminService.createTechnology({ name, icon });
+            Alert.alert('Succès', 'Technologie ajoutée avec succès !');
             navigation.goBack();
         } catch (error) {
-            console.error('Erreur lors de la création de l\'article:', error);
-            Alert.alert('Erreur', 'Impossible de créer l\'article.');
+            console.error('Erreur lors de la création de la technologie:', error);
+            Alert.alert('Erreur', 'Impossible de créer la technologie.');
         } finally {
             setLoading(false);
         }
@@ -33,42 +32,22 @@ const AddArticleScreen = () => {
     return (
         <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
             <View style={styles.form}>
-                <Text style={styles.label}>Titre</Text>
+                <Text style={styles.label}>Nom de la technologie</Text>
                 <TextInput
                     style={styles.input}
-                    value={title}
-                    onChangeText={setTitle}
-                    placeholder="Titre de l'article"
+                    value={name}
+                    onChangeText={setName}
+                    placeholder="Ex: React"
                     placeholderTextColor="#94a3b8"
                 />
 
-                <Text style={styles.label}>Catégorie</Text>
+                <Text style={styles.label}>Icône (URL ou nom)</Text>
                 <TextInput
                     style={styles.input}
-                    value={category}
-                    onChangeText={setCategory}
-                    placeholder="Ex: Technologie, Design..."
+                    value={icon}
+                    onChangeText={setIcon}
+                    placeholder="URL de l'icône SVG ou nom de l'icône"
                     placeholderTextColor="#94a3b8"
-                />
-
-                <Text style={styles.label}>URL de l'image</Text>
-                <TextInput
-                    style={styles.input}
-                    value={imageUrl}
-                    onChangeText={setImageUrl}
-                    placeholder="https://example.com/image.png"
-                    placeholderTextColor="#94a3b8"
-                    keyboardType="url"
-                />
-
-                <Text style={styles.label}>Contenu</Text>
-                <TextInput
-                    style={[styles.input, styles.textArea]}
-                    value={content}
-                    onChangeText={setContent}
-                    placeholder="Contenu de l'article..."
-                    placeholderTextColor="#94a3b8"
-                    multiline
                 />
 
                 <TouchableOpacity
@@ -79,7 +58,7 @@ const AddArticleScreen = () => {
                     {loading ? (
                         <ActivityIndicator color="#ffffff" />
                     ) : (
-                        <Text style={styles.saveButtonText}>Enregistrer</Text>
+                        <Text style={styles.saveButtonText}>Enregistrer la technologie</Text>
                     )}
                 </TouchableOpacity>
             </View>
@@ -112,10 +91,6 @@ const styles = StyleSheet.create({
         borderColor: '#e2e8f0',
         fontSize: 16,
     },
-    textArea: {
-        minHeight: 200,
-        textAlignVertical: 'top',
-    },
     saveButton: {
         backgroundColor: '#0f172a',
         padding: 16,
@@ -130,4 +105,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AddArticleScreen;
+export default AddTechnologyScreen;

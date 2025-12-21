@@ -56,7 +56,7 @@ const ArticlesScreen = ({ navigation }) => {
             </View>
             <View style={styles.actions}>
                 <TouchableOpacity onPress={() => navigation.navigate('EditArticle', { article: item })}>
-                    <Edit color="#22d3ee" size={22} style={styles.actionIcon} />
+                    <Edit color="#0D172B" size={22} style={styles.actionIcon} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleDelete(item.id)}>
                     <Trash2 color="#ef4444" size={22} />
@@ -68,7 +68,7 @@ const ArticlesScreen = ({ navigation }) => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#22d3ee" />
+                <ActivityIndicator size="large" color="#0D172B" />
             </View>
         );
     }
@@ -81,7 +81,7 @@ const ArticlesScreen = ({ navigation }) => {
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.listContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadArticles(); }} tintColor="#22d3ee" />
+                    <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadArticles(); }} tintColor="#0D172B" />
                 }
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
@@ -93,7 +93,7 @@ const ArticlesScreen = ({ navigation }) => {
                 style={styles.fab}
                 onPress={() => navigation.navigate('AddArticle')}
             >
-                <Plus color="#020617" size={30} />
+                <Plus color="#F1F5F9" size={30} />
             </TouchableOpacity>
         </View>
     );
@@ -102,11 +102,11 @@ const ArticlesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#020617',
+        backgroundColor: '#F1F5F9',
     },
     loadingContainer: {
         flex: 1,
-        backgroundColor: '#020617',
+        backgroundColor: '#F1F5F9',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -114,13 +114,13 @@ const styles = StyleSheet.create({
         paddingBottom: 100,
     },
     articleCard: {
-        backgroundColor: '#0f172a',
+        backgroundColor: '#0D172Bfff',
         padding: 20,
         marginHorizontal: 20,
         marginTop: 15,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: '#1e293b',
+        borderColor: '#e2e8f0',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -130,20 +130,20 @@ const styles = StyleSheet.create({
         marginRight: 15,
     },
     articleTitle: {
-        color: '#fff',
+        color: '#0D172B',
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
     },
     badge: {
-        backgroundColor: '#1e293b',
+        backgroundColor: '#e2e8f0',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 6,
         alignSelf: 'flex-start',
     },
     articleCategory: {
-        color: '#22d3ee',
+        color: '#0D172B',
         fontSize: 12,
         fontWeight: '600',
     },
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 30,
         right: 30,
-        backgroundColor: '#22d3ee',
+        backgroundColor: '#0D172B',
         width: 60,
         height: 60,
         borderRadius: 30,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     emptyText: {
-        color: '#94a3b8',
+        color: '#475569',
         fontSize: 16,
     },
 });

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-// NOTE: Remplacez par l'URL de votre backend (ex: http://192.168.1.XX:3000/api)
 const API_URL = 'https://backend-sparknest-site.vercel.app/api';
 
 const api = axios.create({
@@ -17,6 +16,10 @@ api.interceptors.request.use(async (config) => {
 });
 
 export const authService = {
+    register: async (data) => {
+        const response = await api.post('/auth/register', data);
+        return response.data;
+    },
     login: async (email, password) => {
         const response = await api.post('/auth/login', { email, password });
         if (response.data.token) {
@@ -46,6 +49,30 @@ export const adminService = {
     createProject: (data) => api.post('/admin/projects', data),
     updateProject: (id, data) => api.put(`/admin/projects/${id}`, data),
     deleteProject: (id) => api.delete(`/admin/projects/${id}`),
+
+    // Services
+    getServices: () => api.get('/admin/services'),
+    createService: (data) => api.post('/admin/services', data),
+    updateService: (id, data) => api.put(`/admin/services/${id}`, data),
+    deleteService: (id) => api.delete(`/admin/services/${id}`),
+
+    // Technologies
+    getTechnologies: () => api.get('/admin/technologies'),
+    createTechnology: (data) => api.post('/admin/technologies', data),
+    updateTechnology: (id, data) => api.put(`/admin/technologies/${id}`, data),
+    deleteTechnology: (id) => api.delete(`/admin/technologies/${id}`),
+
+    // Testimonials
+    getTestimonials: () => api.get('/admin/testimonials'),
+    createTestimonial: (data) => api.post('/admin/testimonials', data),
+    updateTestimonial: (id, data) => api.put(`/admin/testimonials/${id}`, data),
+    deleteTestimonial: (id) => api.delete(`/admin/testimonials/${id}`),
+
+    // Marketplace
+    getMarketplaceItems: () => api.get('/admin/marketplace-items'),
+    createMarketplaceItem: (data) => api.post('/admin/marketplace-items', data),
+    updateMarketplaceItem: (id, data) => api.put(`/admin/marketplace-items/${id}`, data),
+    deleteMarketplaceItem: (id) => api.delete(`/admin/marketplace-items/${id}`),
 };
 
 export default api;
