@@ -6,16 +6,6 @@ import { Plus, Trash2, Edit } from 'lucide-react-native'; // Keep Lucide for act
 import Icon from '../components/Icon'; // Our custom Lucide Icon wrapper
 import { RootStackNavigationProp } from '../types/navigation'; // Import the type
 
-// Mapping from technology names (or backend icon strings) to valid Lucide icon names
-const iconNameMapping: { [key: string]: string } = {
-    "Node JS": "Server",
-    "Typescript": "Brackets",
-    "React": "Atom",
-    "HTML": "Html5", // Assuming 'Html5' is a valid Lucide icon name
-    "CSS": "Css3",   // Assuming 'Css3' is a valid Lucide icon name
-    // Add more mappings as needed
-};
-
 const TechnologiesScreen = () => {
     const navigation = useNavigation<RootStackNavigationProp<'Technologies'>>(); // Type the navigation hook
     const [technologies, setTechnologies] = useState([]);
@@ -65,7 +55,8 @@ const TechnologiesScreen = () => {
     };
 
     const renderItem = ({ item }) => {
-        const lucideIconName = iconNameMapping[item.name] || 'HelpCircle'; // Fallback icon
+        // Directly use item.icon as the Lucide icon name
+        const lucideIconName = item.icon || 'HelpCircle'; // Fallback icon
         return (
             <View style={styles.itemContainer}>
                 <Icon name={lucideIconName as any} size={32} color="#0f172a" style={styles.icon} />
@@ -106,7 +97,6 @@ const TechnologiesScreen = () => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
