@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, SafeAreaView } from 'react-native';
-import { icons, X } from 'lucide-react-native'; // Import icons object and X icon
+import * as LucideIcons from 'lucide-react-native'; // Import all Lucide icons
+import { LucideIcon } from 'lucide-react-native'; // Import LucideIcon type
 import { getIconNames } from './iconUtils';
 
 interface IconPickerModalProps {
@@ -26,7 +27,7 @@ const IconPickerModal: React.FC<IconPickerModalProps> = ({ isVisible, onClose, o
 
   const renderIconItem = ({ item: iconName }: { item: string }) => {
     const isSelected = selectedIcon === iconName;
-    const LucideIconComponent = icons[iconName as keyof typeof icons];
+    const LucideIconComponent = LucideIcons[iconName as keyof typeof LucideIcons] as LucideIcon; // Cast to LucideIcon
 
     if (!LucideIconComponent) return null; // Should not happen if getIconNames is correct
 
@@ -55,7 +56,7 @@ const IconPickerModal: React.FC<IconPickerModalProps> = ({ isVisible, onClose, o
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Sélectionner une Icône</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <X size={24} color="#0f172a" />
+            <LucideIcons.X size={24} color="#0f172a" />
           </TouchableOpacity>
         </View>
         <TextInput

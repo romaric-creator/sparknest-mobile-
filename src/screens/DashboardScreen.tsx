@@ -1,12 +1,28 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { FileText, Briefcase, MessageSquare, LogOut, Server, Cpu, Star, ShoppingCart } from 'lucide-react-native';
+import { 
+    StyleSheet, 
+    View, 
+    Text, 
+    ScrollView, 
+    TouchableOpacity, 
+    ActivityIndicator, 
+    RefreshControl,
+    StatusBar,
+    Dimensions
+} from 'react-native';
 import { adminService, authService } from '../services/api';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Icon from '../components/Icon';
+import { RootStackNavigationProp } from '../types/navigation'; // Import the type
+
+const { width } = Dimensions.get('window');
 
 const DashboardScreen = () => {
-    const navigation = useNavigation();
-    const [stats, setStats] = useState({ articles: 0, projects: 0, messages: 0, services: 0, technologies: 0, testimonials: 0, marketplaceItems: 0 });
+    const navigation = useNavigation<RootStackNavigationProp<'Dashboard'>>(); // Type the navigation hook
+    const [stats, setStats] = useState({ 
+        articles: 0, projects: 0, messages: 0, services: 0, 
+        technologies: 0, testimonials: 0, marketplaceItems: 0 
+    });
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [user, setUser] = useState(null);
@@ -36,23 +52,16 @@ const DashboardScreen = () => {
                 marketplaceItems: marketplaceItems.data.length,
             });
         } catch (error) {
-            console.error('Erreur lors du chargement des données:', error);
+            console.error('Dash load error:', error);
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            loadData();
-        }, [])
-    );
+    useFocusEffect(useCallback(() => { loadData(); }, []));
 
-    const onRefresh = () => {
-        setRefreshing(true);
-        loadData();
-    };
+    const onRefresh = () => { setRefreshing(true); loadData(); };
 
     const handleLogout = async () => {
         await authService.logout();
@@ -61,205 +70,176 @@ const DashboardScreen = () => {
 
     if (loading && !refreshing) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0f172a" />
+            <View style={styles.center}>
+                <ActivityIndicator size="large" color="#6366F1" />
             </View>
         );
     }
 
     return (
-        <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.contentContainer}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0f172a" />
-            }
+        <ScrollView 
+            style={styles.container} 
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366F1" />}
         >
+            <StatusBar barStyle="dark-content" />
+            
+            {/* Top Header */}
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.welcome}>Bonjour,</Text>
-                    <Text style={styles.name}>{user?.name || 'Admin'}</Text>
+                    <Text style={styles.welcomeText}>Tableau de bord</Text>
+                    <Text style={styles.userName}>Ravi de vous revoir, {user?.name?.split(' ')[0] || 'Admin'} 👋</Text>
                 </View>
-                <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                    <LogOut color="#ef4444" size={24} />
+                <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
+                    <Icon name="LogOut" color="#EF4444" size={20} />
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.statsGrid}>
-                <StatCard
-                    title="Articles"
-                    value={stats.articles}
-                    icon={<FileText color="#0f172a" size={24} />}
-                    onPress={() => navigation.navigate('Articles')}
-                />
-                <StatCard
-                    title="Projets"
-                    value={stats.projects}
-                    icon={<Briefcase color="#0f172a" size={24} />}
-                    onPress={() => navigation.navigate('Projects')}
-                />
-                <StatCard
-                    title="Services"
-                    value={stats.services}
-                    icon={<Server color="#0f172a" size={24} />}
-                    onPress={() => navigation.navigate('Services')}
-                />
-                <StatCard
-                    title="Technologies"
-                    value={stats.technologies}
-                    icon={<Cpu color="#0f172a" size={24} />}
-                    onPress={() => navigation.navigate('Technologies')}
-                />
-                <StatCard
-                    title="Témoignages"
-                    value={stats.testimonials}
-                    icon={<Star color="#0f172a" size={24} />}
-                    onPress={() => navigation.navigate('Testimonials')}
-                />
-                <StatCard
-                    title="Marketplace"
-                    value={stats.marketplaceItems}
-                    icon={<ShoppingCart color="#0f172a" size={24} />}
-                    onPress={() => navigation.navigate('MarketplaceItems')}
-                />
-                <StatCard
-                    title="Messages"
-                    value={stats.messages}
-                    subtitle="Non lus"
-                    icon={<MessageSquare color="#0f172a" size={24} />}
+            {/* Alert Messages (S'il y a des messages non lus) */}
+            {stats.messages > 0 && (
+                <TouchableOpacity 
+                    style={styles.alertBanner} 
                     onPress={() => navigation.navigate('Messages')}
+                >
+                    <Icon name="Mail" color="#FFF" size={18} />
+                    <Text style={styles.alertText}>Vous avez {stats.messages} nouveau{stats.messages > 1 ? 's' : ''} message{stats.messages > 1 ? 's' : ''}</Text>
+                    <Icon name="ChevronRight" color="#FFF" size={16} />
+                </TouchableOpacity>
+            )}
+
+            {/* Stats Grid */}
+            <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Statistiques</Text>
+            </View>
+            <View style={styles.grid}>
+                <StatCard 
+                    label="Articles" count={stats.articles} icon="FileText" color="#6366F1"
+                    onPress={() => navigation.navigate('Articles')} 
+                />
+                <StatCard 
+                    label="Projets" count={stats.projects} icon="Briefcase" color="#10B981"
+                    onPress={() => navigation.navigate('Projects')} 
+                />
+                <StatCard 
+                    label="Shop" count={stats.marketplaceItems} icon="ShoppingCart" color="#F59E0B"
+                    onPress={() => navigation.navigate('MarketplaceItems')} 
+                />
+                <StatCard 
+                    label="Reviews" count={stats.testimonials} icon="Star" color="#EC4899"
+                    onPress={() => navigation.navigate('Testimonials')} 
                 />
             </View>
 
-            <View style={styles.quickActions}>
-                <Text style={styles.sectionTitle}>Actions Rapides</Text>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AddArticle')}>
-                    <Text style={styles.actionButtonText}>+ Nouvel Article</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AddProject')}>
-                    <Text style={styles.actionButtonText}>+ Nouveau Projet</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AddService')}>
-                    <Text style={styles.actionButtonText}>+ Nouveau Service</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AddTechnology')}>
-                    <Text style={styles.actionButtonText}>+ Nouvelle Technologie</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AddTestimonial')}>
-                    <Text style={styles.actionButtonText}>+ Nouveau Témoignage</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AddMarketplaceItem')}>
-                    <Text style={styles.actionButtonText}>+ Nouvel Article Marketplace</Text>
-                </TouchableOpacity>
+            {/* Quick Actions */}
+            <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Création Rapide</Text>
             </View>
+            <View style={styles.actionsContainer}>
+                <ActionButton label="Article" icon="Plus" color="#6366F1" onPress={() => navigation.navigate('AddArticle')} />
+                <ActionButton label="Projet" icon="Plus" color="#10B981" onPress={() => navigation.navigate('AddProject')} />
+                <ActionButton label="Service" icon="Plus" color="#0EA5E9" onPress={() => navigation.navigate('AddService')} />
+                <ActionButton label="Tech" icon="Plus" color="#8B5CF6" onPress={() => navigation.navigate('AddTechnology')} />
+            </View>
+
+            <View style={{ height: 40 }} />
         </ScrollView>
     );
 };
 
-const StatCard = ({ title, value, icon, subtitle = null, onPress }) => (
-    <TouchableOpacity style={styles.statCard} onPress={onPress}>
-        <View style={styles.statHeader}>
-            {icon}
-            <Text style={styles.statValue}>{value}</Text>
+/* Composant Interne: Carte de Stat */
+const StatCard = ({ label, count, icon, color, onPress }) => (
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+        <View style={[styles.iconBox, { backgroundColor: color + '15' }]}>
+            <Icon name={icon} color={color} size={22} />
         </View>
-        <Text style={styles.statTitle}>{title}</Text>
-        {subtitle && <Text style={styles.statSubtitle}>{subtitle}</Text>}
+        <Text style={styles.cardCount}>{count}</Text>
+        <Text style={styles.cardLabel}>{label}</Text>
+    </TouchableOpacity>
+);
+
+/* Composant Interne: Bouton d'action */
+const ActionButton = ({ label, icon, color, onPress }) => (
+    <TouchableOpacity style={styles.actionItem} onPress={onPress}>
+        <View style={[styles.actionIconCircle, { backgroundColor: color }]}>
+            <Icon name={icon} color="#FFF" size={16} />
+        </View>
+        <Text style={styles.actionLabel}>{label}</Text>
     </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f8fafc',
-    },
-    contentContainer: {
-        padding: 20,
-    },
-    loadingContainer: {
-        flex: 1,
-        backgroundColor: '#f8fafc',
-        justifyContent: 'center',
+    container: { flex: 1, backgroundColor: '#F8FAFC' },
+    center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    header: { 
+        paddingHorizontal: 24, 
+        paddingTop: 60, 
+        paddingBottom: 25, 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
         alignItems: 'center',
+        backgroundColor: '#FFF'
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 40,
-        marginBottom: 30,
-    },
-    welcome: {
-        color: '#64748b',
-        fontSize: 16,
-    },
-    name: {
-        color: '#0f172a',
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    logoutButton: {
-        padding: 10,
-    },
-    statsGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-    },
-    statCard: {
-        backgroundColor: '#ffffff',
-        width: '48%',
-        padding: 20,
+    welcomeText: { fontSize: 14, fontWeight: '700', color: '#64748B', textTransform: 'uppercase', letterSpacing: 1 },
+    userName: { fontSize: 22, fontWeight: '900', color: '#0F172A', marginTop: 4 },
+    logoutBtn: { backgroundColor: '#FEF2F2', padding: 10, borderRadius: 12 },
+    
+    alertBanner: {
+        margin: 20,
+        backgroundColor: '#0F172A',
         borderRadius: 16,
-        borderWidth: 1,
-        borderColor: '#e2e8f0',
-        marginBottom: 16,
-    },
-    statHeader: {
+        padding: 16,
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
     },
-    statValue: {
-        color: '#0f172a',
-        fontSize: 28,
-        fontWeight: 'bold',
+    alertText: { flex: 1, color: '#FFF', fontWeight: '700', marginLeft: 12, fontSize: 14 },
+
+    sectionHeader: { paddingHorizontal: 24, marginTop: 10, marginBottom: 16 },
+    sectionTitle: { fontSize: 18, fontWeight: '800', color: '#1E293B' },
+
+    grid: { 
+        paddingHorizontal: 16, 
+        flexDirection: 'row', 
+        flexWrap: 'wrap', 
+        justifyContent: 'space-between' 
     },
-    statTitle: {
-        color: '#334155',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    statSubtitle: {
-        color: '#64748b',
-        fontSize: 12,
-        marginTop: 2,
-    },
-    quickActions: {
-        marginTop: 20,
-        marginBottom: 40,
-    },
-    sectionTitle: {
-        color: '#0f172a',
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 15,
-    },
-    actionButton: {
-        backgroundColor: '#ffffff',
-        paddingVertical: 16,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-        marginBottom: 10,
+    card: {
+        backgroundColor: '#FFF',
+        width: (width / 2) - 24,
+        padding: 20,
+        borderRadius: 24,
+        marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#e2e8f0',
+        borderColor: '#F1F5F9',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2
     },
-    actionButtonText: {
-        color: '#334155',
-        fontSize: 16,
-        fontWeight: '600',
-        textAlign: 'center',
+    iconBox: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
+    cardCount: { fontSize: 24, fontWeight: '900', color: '#0F172A' },
+    cardLabel: { fontSize: 13, fontWeight: '600', color: '#64748B', marginTop: 2 },
+
+    actionsContainer: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        paddingHorizontal: 24 
     },
+    actionItem: { alignItems: 'center', width: (width - 48) / 4 },
+    actionIconCircle: { 
+        width: 50, 
+        height: 50, 
+        borderRadius: 25, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 3
+    },
+    actionLabel: { fontSize: 11, fontWeight: '700', color: '#475569' }
 });
 
 export default DashboardScreen;

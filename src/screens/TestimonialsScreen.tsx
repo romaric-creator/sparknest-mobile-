@@ -4,9 +4,10 @@ import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { adminService } from '../services/api';
 import { Plus, Trash2, Edit, User } from 'lucide-react-native';
+import { RootStackNavigationProp } from '../types/navigation'; // Import the type
 
 const TestimonialsScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<RootStackNavigationProp<'Testimonials'>>(); // Type the navigation hook
     const [testimonials, setTestimonials] = useState([]);
     const [loading, setLoading] = useState(true);
 

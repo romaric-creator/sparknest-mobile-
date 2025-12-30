@@ -4,9 +4,10 @@ import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { adminService } from '../services/api';
 import { Plus, Trash2, Edit, Star } from 'lucide-react-native';
+import { RootStackNavigationProp } from '../types/navigation'; // Import the type
 
 const MarketplaceItemsScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<RootStackNavigationProp<'MarketplaceItems'>>(); // Type the navigation hook
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
 

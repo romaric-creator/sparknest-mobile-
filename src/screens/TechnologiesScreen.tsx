@@ -1,12 +1,23 @@
-// mobile/src/screens/TechnologiesScreen.tsx
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { adminService } from '../services/api';
-import { Plus, Trash2, Edit } from 'lucide-react-native';
+import { Plus, Trash2, Edit } from 'lucide-react-native'; // Keep Lucide for action buttons
+import Icon from '../components/Icon'; // Our custom Lucide Icon wrapper
+import { RootStackNavigationProp } from '../types/navigation'; // Import the type
+
+// Mapping from technology names (or backend icon strings) to valid Lucide icon names
+const iconNameMapping: { [key: string]: string } = {
+    "Node JS": "Server",
+    "Typescript": "Brackets",
+    "React": "Atom",
+    "HTML": "Html5", // Assuming 'Html5' is a valid Lucide icon name
+    "CSS": "Css3",   // Assuming 'Css3' is a valid Lucide icon name
+    // Add more mappings as needed
+};
 
 const TechnologiesScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<RootStackNavigationProp<'Technologies'>>(); // Type the navigation hook
     const [technologies, setTechnologies] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -53,22 +64,25 @@ const TechnologiesScreen = () => {
         );
     };
 
-    const renderItem = ({ item }) => (
-        <View style={styles.itemContainer}>
-            <Image source={{ uri: item.icon }} style={styles.icon} />
-            <View style={styles.itemTextContainer}>
-                <Text style={styles.itemTitle}>{item.name}</Text>
+    const renderItem = ({ item }) => {
+        const lucideIconName = iconNameMapping[item.name] || 'HelpCircle'; // Fallback icon
+        return (
+            <View style={styles.itemContainer}>
+                <Icon name={lucideIconName as any} size={32} color="#0f172a" style={styles.icon} />
+                <View style={styles.itemTextContainer}>
+                    <Text style={styles.itemTitle}>{item.name}</Text>
+                </View>
+                <View style={styles.itemActions}>
+                    <TouchableOpacity onPress={() => {/* TODO: Navigate to Edit screen */}} style={styles.actionButton}>
+                        <Edit size={20} color="#334155" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
+                        <Trash2 size={20} color="#ef4444" />
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.itemActions}>
-                <TouchableOpacity onPress={() => {/* TODO: Navigate to Edit screen */}} style={styles.actionButton}>
-                    <Edit size={20} color="#334155" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
-                    <Trash2 size={20} color="#ef4444" />
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
+        );
+    };
 
     if (loading) {
         return <ActivityIndicator style={styles.loader} size="large" color="#0f172a" />;
@@ -120,8 +134,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
     },
     icon: {
-        width: 32,
-        height: 32,
+        // No specific styling needed for Icon component, it handles size/color
         marginRight: 16,
     },
     itemTextContainer: {

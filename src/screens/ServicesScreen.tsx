@@ -1,12 +1,21 @@
-// mobile/src/screens/ServicesScreen.tsx
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { adminService } from '../services/api';
-import { Plus, Trash2, Edit } from 'lucide-react-native';
+import { Plus, Trash2, Edit } from 'lucide-react-native'; // Keep Lucide for action buttons
+import Icon from '../components/Icon'; // Our custom Lucide Icon wrapper
+import { RootStackNavigationProp } from '../types/navigation'; // Import the type
+
+// Mapping from service names (or backend icon strings) to valid Lucide icon names
+const iconNameMapping: { [key: string]: string } = {
+    "Développement Web": "Code", // Example mapping
+    "Design UI/UX": "Palette",   // Example mapping
+    "Consulting IT": "Briefcase", // Example mapping
+    // Add more mappings as needed
+};
 
 const ServicesScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<RootStackNavigationProp<'Services'>>(); // Type the navigation hook
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -53,22 +62,26 @@ const ServicesScreen = () => {
         );
     };
 
-    const renderItem = ({ item }) => (
-        <View style={styles.itemContainer}>
-            <View style={styles.itemTextContainer}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
-                <Text style={styles.itemDescription}>{item.description}</Text>
+    const renderItem = ({ item }) => {
+        const lucideIconName = iconNameMapping[item.icon] || 'HelpCircle'; // Use item.icon for mapping, fallback to HelpCircle
+        return (
+            <View style={styles.itemContainer}>
+                <Icon name={lucideIconName as any} size={32} color="#0f172a" style={styles.itemIcon} />
+                <View style={styles.itemTextContainer}>
+                    <Text style={styles.itemTitle}>{item.title}</Text>
+                    <Text style={styles.itemDescription}>{item.description}</Text>
+                </View>
+                <View style={styles.itemActions}>
+                    <TouchableOpacity onPress={() => {/* TODO: Navigate to Edit screen */}} style={styles.actionButton}>
+                        <Edit size={20} color="#334155" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
+                        <Trash2 size={20} color="#ef4444" />
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.itemActions}>
-                <TouchableOpacity onPress={() => {/* TODO: Navigate to Edit screen */}} style={styles.actionButton}>
-                    <Edit size={20} color="#334155" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
-                    <Trash2 size={20} color="#ef4444" />
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
+        );
+    };
 
     if (loading) {
         return <ActivityIndicator style={styles.loader} size="large" color="#0f172a" />;
@@ -119,6 +132,9 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
+    },
+    itemIcon: {
+        marginRight: 16,
     },
     itemTextContainer: {
         flex: 1,
